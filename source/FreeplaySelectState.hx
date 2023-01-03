@@ -1,14 +1,19 @@
 package;
 
 import flixel.group.FlxGroup.FlxTypedGroup;
-
 import flixel.FlxSprite;
-
 import flixel.FlxG;
+
+// IMPORTS THE LIST OF ALL THE WEEKS
+import WeekData;
+
+// CONVERTS FREEPLAYCATS INTO AN EMPTY ARRAY.
+var freeplayCats:Array<String> = [];
+
 
 class FreeplaySelectState extends MusicBeatState{
 
-    public static var freeplayCats:Array<String> = ['Dave', 'Base', 'Extra', 'Joke'];
+    // public static var freeplayCats:Array<String> = ['Dave', 'Base', 'Extra', 'Joke'];
 
     public static var curCategory:Int = 0;
 
@@ -23,6 +28,16 @@ class FreeplaySelectState extends MusicBeatState{
     var categoryIcon:FlxSprite;
 
     override function create(){
+        // RESETS FREEPLAYCATS
+        freeplayCats = [];
+
+        // MAKES THE GAME LOOK FOR WEEKS
+        WeekData.reloadWeekFiles();
+
+        // trace(WeekData.weeksLoaded);
+        for (i in WeekData.weeksLoaded.keys()) {
+            freeplayCats.push(i);
+        }
 
         BG = new FlxSprite().loadGraphic(Paths.image('backgrounds/morie'));
 
