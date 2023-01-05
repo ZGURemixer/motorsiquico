@@ -27,6 +27,9 @@ class FreeplaySelectState extends MusicBeatState{
 
     var categoryIcon:FlxSprite;
 
+    // ADDING THIS VARIABLE TO AVOID CRASHES
+    public static var selectedPack = "";
+
     override function create(){
         // RESETS FREEPLAYCATS
         freeplayCats = [];
@@ -109,6 +112,8 @@ class FreeplaySelectState extends MusicBeatState{
 
         if (controls.ACCEPT){
 
+            // SETS THE VARIABLE TO THE VALUE OF THE SELECTED PACK
+            selectedPack = freeplayCats[curSelected];
             MusicBeatState.switchState(new FreeplayState());
 
         }
