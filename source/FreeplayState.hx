@@ -205,6 +205,27 @@ class FreeplayState extends MusicBeatState
 		text.setFormat(Paths.font("comic.ttf"), size, FlxColor.WHITE, RIGHT);
 		text.scrollFactor.set();
 		add(text);
+		
+		// This fixes the difficulty bug
+		var currentWeekData = WeekData.weeksLoaded.get(FreeplaySelectState.selectedPack);
+		var currentWeekDifficulties = currentWeekData.difficulties;
+		// trace(IndexFinder);
+		// trace(CoolUtil.difficulties);
+		// trace(WeekData.weeksLoaded.get(FreeplaySelectState.selectedPack));
+		// for (s in WeekData.weeksLoaded.keys()) {
+		// 	trace(s);
+		// };
+		// trace(WeekData.weeksLoaded);
+		// trace(Type.typeof(WeekData.weeksLoaded.get(FreeplaySelectState.selectedPack)));
+
+		
+		trace(currentWeekDifficulties);
+
+		if (currentWeekDifficulties != null) {
+			var currentWeekDifficultiesSplit = currentWeekDifficulties.split(', ');
+			CoolUtil.difficulties = currentWeekDifficultiesSplit;
+		};
+
 		super.create();
 	}
 
