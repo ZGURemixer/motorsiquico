@@ -170,6 +170,7 @@ class FreeplaySelectState extends MusicBeatState{
 
         FlxG.sound.play(Paths.sound('scrollMenu'));
 
+        // THIS TRACES THE CURRENTLY LOADED WEEKS
         trace(WeekData.weeksLoaded);
 
     }
