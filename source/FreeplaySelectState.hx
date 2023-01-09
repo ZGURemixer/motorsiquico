@@ -1,5 +1,6 @@
 package;
 
+import haxe.ds.Map;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxSprite;
 import flixel.FlxG;
@@ -9,6 +10,9 @@ import WeekData;
 
 // CONVERTS FREEPLAYCATS INTO AN EMPTY ARRAY.
 var freeplayCats:Array<String> = [];
+
+// THIS VARIABLE FIXES THE DIFFICULTY GLITCH
+var currentWeekDifficultiesSplit3 = [];
 
 
 class FreeplaySelectState extends MusicBeatState{
@@ -165,6 +169,8 @@ class FreeplaySelectState extends MusicBeatState{
         categoryIcon.loadGraphic(Paths.image('weekicons/week_icon_' + (freeplayCats[curSelected].toLowerCase())));
 
         FlxG.sound.play(Paths.sound('scrollMenu'));
+
+        trace(WeekData.weeksLoaded);
 
     }
 

@@ -28,6 +28,10 @@ import sys.FileSystem;
 
 using StringTools;
 
+// THESE VARS FIX THE DIFFICULTIES BUG
+var currentWeekDifficultiesSplit = ["Easy", "Normal", "Hard"];
+var currentWeekDifficulties2 = "";
+
 class FreeplayState extends MusicBeatState
 {
 	var songs:Array<SongMetadata> = [];
@@ -54,11 +58,14 @@ class FreeplayState extends MusicBeatState
 	var intendedColor:Int;
 	var colorTween:FlxTween;
 
-	// THESE PREVENT A CRASH
+	// THIS VAR PREVENTS A CRASH
 	private var theNumberOne:Int = 1;
 
 	override function create()
 	{
+
+		curDifficulty = -1;
+		
 		//Paths.clearStoredMemory();
 		//Paths.clearUnusedMemory();
 
@@ -206,26 +213,19 @@ class FreeplayState extends MusicBeatState
 		text.scrollFactor.set();
 		add(text);
 		
-		// This fixes the difficulty bug
+		// THIS FIXES THE DIFFICULTY BUG
 		var currentWeekData = WeekData.weeksLoaded.get(FreeplaySelectState.selectedPack);
 		var currentWeekDifficulties = currentWeekData.difficulties;
-		// trace(IndexFinder);
-		// trace(CoolUtil.difficulties);
-		// trace(WeekData.weeksLoaded.get(FreeplaySelectState.selectedPack));
-		// for (s in WeekData.weeksLoaded.keys()) {
-		// 	trace(s);
-		// };
-		// trace(WeekData.weeksLoaded);
-		// trace(Type.typeof(WeekData.weeksLoaded.get(FreeplaySelectState.selectedPack)));
 
-		
-		trace(currentWeekDifficulties);
 
 		if (currentWeekDifficulties != null) {
-			var currentWeekDifficultiesSplit = currentWeekDifficulties.split(', ');
+			currentWeekDifficultiesSplit = currentWeekDifficulties.split(', ');
 			CoolUtil.difficulties = currentWeekDifficultiesSplit;
+		} else {
+			CoolUtil.difficulties = ["Easy", "Normal", "Hard"];
 		};
 
+		trace(currentWeekDifficultiesSplit);
 		super.create();
 	}
 
@@ -438,11 +438,11 @@ class FreeplayState extends MusicBeatState
 		curDifficulty += change;
 
 		if (curDifficulty < 0)
-			curDifficulty = CoolUtil.difficulties.length-1;
-		if (curDifficulty >= CoolUtil.difficulties.length)
+			curDifficulty = currentWeekDifficultiesSplit.length-1;
+		if (curDifficulty >= currentWeekDifficultiesSplit.length)
 			curDifficulty = 0;
 
-		lastDifficultyName = CoolUtil.difficulties[curDifficulty];
+		lastDifficultyName = currentWeekDifficultiesSplit[curDifficulty];
 
 		#if !switch
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
@@ -512,9 +512,12 @@ class FreeplayState extends MusicBeatState
 		Paths.currentModDirectory = songs[curSelected].folder;
 		PlayState.storyWeek = songs[curSelected].week;
 
-		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
+		CoolUtil.difficulties = currentWeekDifficultiesSplit;
 		// var diffStr:String = WeekData.getCurrentWeek().difficulties;
-		var diffStr:String = WeekData.getCurrentWeek().difficulties;
+
+		currentWeekDifficulties2 = WeekData.weeksLoaded.get(FreeplaySelectState.selectedPack).difficulties;
+
+		var diffStr:String = currentWeekDifficulties2;
 		if(diffStr != null) diffStr = diffStr.trim(); //Fuck you HTML5
 
 		if(diffStr != null && diffStr.length > 0)
@@ -533,20 +536,20 @@ class FreeplayState extends MusicBeatState
 
 			if(diffs.length > 0 && diffs[0].length > 0)
 			{
-				CoolUtil.difficulties = diffs;
+				CoolUtil.difficulties = currentWeekDifficultiesSplit;
 			}
 		}
 		
 		if(CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
 		{
-			curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty)));
+			curDifficulty = Math.round(Math.max(0, currentWeekDifficultiesSplit.indexOf(CoolUtil.defaultDifficulty)));
 		}
 		else
 		{
 			curDifficulty = 0;
 		}
 
-		var newPos:Int = CoolUtil.difficulties.indexOf(lastDifficultyName);
+		var newPos:Int = currentWeekDifficultiesSplit.indexOf(lastDifficultyName);
 		//trace('Pos of ' + lastDifficultyName + ' is ' + newPos);
 		if(newPos > -1)
 		{
