@@ -1,9 +1,15 @@
+// THIS CODE HAS BEEN PARTIALLY TAKEN FROM https://gamebanana.com/questions/29334?post=10099553
+
 package;
 
 import haxe.ds.Map;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxSprite;
 import flixel.FlxG;
+
+#if desktop
+import Discord.DiscordClient;
+#end
 
 // IMPORTS THE LIST OF ALL THE WEEKS
 import WeekData;
@@ -34,6 +40,12 @@ class FreeplaySelectState extends MusicBeatState{
     public static var selectedPack = "";
 
     override function create(){
+
+        #if desktop
+		// Updating Discord Rich Presence
+		DiscordClient.changePresence("Selecting a pack", null);
+		#end
+
         // RESETS FREEPLAYCATS
         freeplayCats = [];
 
@@ -45,7 +57,7 @@ class FreeplaySelectState extends MusicBeatState{
             freeplayCats.push(i);
         }
 
-        BG = new FlxSprite().loadGraphic(Paths.image('backgrounds/morie'));
+        BG = new FlxSprite().loadGraphic(Paths.image('morie'));
 
         BG.updateHitbox();
 
