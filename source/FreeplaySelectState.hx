@@ -11,13 +11,12 @@ import WeekData;
 // CONVERTS FREEPLAYCATS INTO AN EMPTY ARRAY.
 var freeplayCats:Array<String> = [];
 
-// THIS VARIABLE FIXES THE DIFFICULTY GLITCH
-var currentWeekDifficultiesSplit3 = [];
-
-
 class FreeplaySelectState extends MusicBeatState{
 
     // public static var freeplayCats:Array<String> = ['Dave', 'Base', 'Extra', 'Joke'];
+
+    // THIS VARIABLE FIXES THE DIFFICULTY GLITCH
+    public var currentWeekDifficultiesAlt = ["Easy", "Normal", "Hard"];
 
     public static var curCategory:Int = 0;
 
@@ -171,8 +170,16 @@ class FreeplaySelectState extends MusicBeatState{
         FlxG.sound.play(Paths.sound('scrollMenu'));
 
         // THIS TRACES THE CURRENTLY LOADED WEEKS
-        trace(WeekData.weeksLoaded);
-
+        if (WeekData.weeksLoaded[freeplayCats[curSelected]].difficulties != null) {
+            if (WeekData.weeksLoaded[freeplayCats[curSelected]].difficulties != "") {
+                currentWeekDifficultiesAlt = WeekData.weeksLoaded[freeplayCats[curSelected]].difficulties.split(", ");
+            } else {
+                currentWeekDifficultiesAlt = ["Easy", "Normal", "Hard"];
+            };
+        } else {
+            currentWeekDifficultiesAlt = ["Easy", "Normal", "Hard"];
+        };
+        trace(currentWeekDifficultiesAlt);
     }
 
 }

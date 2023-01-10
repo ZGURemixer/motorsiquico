@@ -219,13 +219,22 @@ class FreeplayState extends MusicBeatState
 
 
 		if (currentWeekDifficulties != null) {
-			currentWeekDifficultiesSplit = currentWeekDifficulties.split(', ');
-			CoolUtil.difficulties = currentWeekDifficultiesSplit;
+			if (currentWeekDifficulties != "") {
+				currentWeekDifficultiesSplit = currentWeekDifficulties.split(', ');
+				CoolUtil.difficulties = currentWeekDifficultiesSplit;
+			} else {
+				CoolUtil.difficulties = ["Easy", "Normal", "Hard"];
+			}
 		} else {
 			CoolUtil.difficulties = ["Easy", "Normal", "Hard"];
 		};
-
+		
 		trace(currentWeekDifficultiesSplit);
+
+		var firstDiffUppercase = currentWeekDifficultiesSplit[0].toUpperCase();
+
+		diffText.text = '< ' + firstDiffUppercase + ' >';
+
 		super.create();
 	}
 
@@ -347,7 +356,7 @@ class FreeplayState extends MusicBeatState
 				colorTween.cancel();
 			}
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-			MusicBeatState.switchState(new MainMenuState());
+			MusicBeatState.switchState(new FreeplaySelectState());
 		}
 
 		if(ctrl)
