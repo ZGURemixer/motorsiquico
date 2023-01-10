@@ -18,11 +18,19 @@ import lime.utils.Assets;
 import flixel.system.FlxSound;
 import openfl.utils.Assets as OpenFlAssets;
 import WeekData;
+
+// IMPORTS FREEPLAYSELECTSTATE
+import FreeplaySelectState;
+
 #if MODS_ALLOWED
 import sys.FileSystem;
 #end
 
 using StringTools;
+
+// THESE VARS FIX THE DIFFICULTIES BUG
+var currentWeekDifficultiesSplit = ["Easy", "Normal", "Hard"];
+var currentWeekDifficulties2 = "";
 
 class FreeplayState extends MusicBeatState
 {
@@ -50,11 +58,17 @@ class FreeplayState extends MusicBeatState
 	var intendedColor:Int;
 	var colorTween:FlxTween;
 
+	// THIS VAR PREVENTS A CRASH
+	private var theNumberOne:Int = 1;
+
 	override function create()
 	{
+
+		curDifficulty = -1;
+		
 		//Paths.clearStoredMemory();
 		//Paths.clearUnusedMemory();
-		
+
 		persistentUpdate = true;
 		PlayState.isStoryMode = false;
 		WeekData.reloadWeekFiles(false);
@@ -64,10 +78,11 @@ class FreeplayState extends MusicBeatState
 		DiscordClient.changePresence("In the Menus", null);
 		#end
 
-		for (i in 0...WeekData.weeksList.length) {
-			if(weekIsLocked(WeekData.weeksList[i])) continue;
+		// for (i in 0...WeekData.weeksList.length) {
+		for (i in 0...theNumberOne) {
+			// if(weekIsLocked(WeekData.weeksList[i])) continue;
 
-			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
+			var leWeek:WeekData = WeekData.weeksLoaded.get(FreeplaySelectState.selectedPack);
 			var leSongs:Array<String> = [];
 			var leChars:Array<String> = [];
 
@@ -138,7 +153,7 @@ class FreeplayState extends MusicBeatState
 		WeekData.setDirectoryFromWeek();
 
 		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
-		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
+		scoreText.setFormat(Paths.font("comic.ttf"), 32, FlxColor.WHITE, RIGHT);
 
 		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 66, 0xFF000000);
 		scoreBG.alpha = 0.6;
@@ -194,9 +209,32 @@ class FreeplayState extends MusicBeatState
 		var size:Int = 18;
 		#end
 		var text:FlxText = new FlxText(textBG.x, textBG.y + 4, FlxG.width, leText, size);
-		text.setFormat(Paths.font("vcr.ttf"), size, FlxColor.WHITE, RIGHT);
+		text.setFormat(Paths.font("comic.ttf"), size, FlxColor.WHITE, RIGHT);
 		text.scrollFactor.set();
 		add(text);
+		
+		// THIS FIXES THE DIFFICULTY BUG
+		var currentWeekData = WeekData.weeksLoaded.get(FreeplaySelectState.selectedPack);
+		var currentWeekDifficulties = currentWeekData.difficulties;
+
+
+		if (currentWeekDifficulties != null) {
+			if (currentWeekDifficulties != "") {
+				currentWeekDifficultiesSplit = currentWeekDifficulties.split(', ');
+				CoolUtil.difficulties = currentWeekDifficultiesSplit;
+			} else {
+				CoolUtil.difficulties = ["Easy", "Normal", "Hard"];
+			}
+		} else {
+			CoolUtil.difficulties = ["Easy", "Normal", "Hard"];
+		};
+		
+		trace(currentWeekDifficultiesSplit);
+
+		var firstDiffUppercase = currentWeekDifficultiesSplit[0].toUpperCase();
+
+		diffText.text = '< ' + firstDiffUppercase + ' >';
+
 		super.create();
 	}
 
@@ -318,7 +356,7 @@ class FreeplayState extends MusicBeatState
 				colorTween.cancel();
 			}
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-			MusicBeatState.switchState(new MainMenuState());
+			MusicBeatState.switchState(new FreeplaySelectState());
 		}
 
 		if(ctrl)
@@ -409,11 +447,11 @@ class FreeplayState extends MusicBeatState
 		curDifficulty += change;
 
 		if (curDifficulty < 0)
-			curDifficulty = CoolUtil.difficulties.length-1;
-		if (curDifficulty >= CoolUtil.difficulties.length)
+			curDifficulty = currentWeekDifficultiesSplit.length-1;
+		if (curDifficulty >= currentWeekDifficultiesSplit.length)
 			curDifficulty = 0;
 
-		lastDifficultyName = CoolUtil.difficulties[curDifficulty];
+		lastDifficultyName = currentWeekDifficultiesSplit[curDifficulty];
 
 		#if !switch
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
@@ -479,12 +517,16 @@ class FreeplayState extends MusicBeatState
 				// item.setGraphicSize(Std.int(item.width));
 			}
 		}
-		
+
 		Paths.currentModDirectory = songs[curSelected].folder;
 		PlayState.storyWeek = songs[curSelected].week;
 
-		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
-		var diffStr:String = WeekData.getCurrentWeek().difficulties;
+		CoolUtil.difficulties = currentWeekDifficultiesSplit;
+		// var diffStr:String = WeekData.getCurrentWeek().difficulties;
+
+		currentWeekDifficulties2 = WeekData.weeksLoaded.get(FreeplaySelectState.selectedPack).difficulties;
+
+		var diffStr:String = currentWeekDifficulties2;
 		if(diffStr != null) diffStr = diffStr.trim(); //Fuck you HTML5
 
 		if(diffStr != null && diffStr.length > 0)
@@ -503,20 +545,20 @@ class FreeplayState extends MusicBeatState
 
 			if(diffs.length > 0 && diffs[0].length > 0)
 			{
-				CoolUtil.difficulties = diffs;
+				CoolUtil.difficulties = currentWeekDifficultiesSplit;
 			}
 		}
 		
 		if(CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
 		{
-			curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty)));
+			curDifficulty = Math.round(Math.max(0, currentWeekDifficultiesSplit.indexOf(CoolUtil.defaultDifficulty)));
 		}
 		else
 		{
 			curDifficulty = 0;
 		}
 
-		var newPos:Int = CoolUtil.difficulties.indexOf(lastDifficultyName);
+		var newPos:Int = currentWeekDifficultiesSplit.indexOf(lastDifficultyName);
 		//trace('Pos of ' + lastDifficultyName + ' is ' + newPos);
 		if(newPos > -1)
 		{
