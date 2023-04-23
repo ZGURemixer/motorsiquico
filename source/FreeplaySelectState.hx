@@ -13,6 +13,12 @@ import Discord.DiscordClient;
 
 // IMPORTS THE LIST OF ALL THE WEEKS
 import WeekData;
+import Paths;
+
+// IMPORTS THE NECESSARY MODULES FOR PARSING A JSON
+import haxe.Json;
+import haxe.format.JsonParser;
+import Paths;
 
 // CONVERTS FREEPLAYCATS INTO AN EMPTY ARRAY.
 var freeplayCats:Array<String> = [];
@@ -192,6 +198,7 @@ class FreeplaySelectState extends MusicBeatState{
             currentWeekDifficultiesAlt = ["Easy", "Normal", "Hard"];
         };
         trace(currentWeekDifficultiesAlt);
+        trace(JsonParser.parse(Paths.getTextFromFile("data/packlist.json")));
     }
 
 }

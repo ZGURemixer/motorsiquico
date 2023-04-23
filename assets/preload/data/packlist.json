@@ -1,0 +1,23 @@
+{
+    "packs": {
+      "test": {
+        "songs": {
+          "tutorial": {
+            "diffs": [
+              "Easy",
+              "Medium",
+              "Hard"
+            ],
+            "info": [
+              "gf",
+              [
+                165,
+                0,
+                77
+              ]
+            ]
+          }
+        }
+      }
+    }
+}
