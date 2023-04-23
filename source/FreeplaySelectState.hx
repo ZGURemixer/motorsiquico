@@ -23,9 +23,13 @@ import Paths;
 // CONVERTS FREEPLAYCATS INTO AN EMPTY ARRAY.
 var freeplayCats:Array<String> = [];
 
+// INITIATES LIST OF PACKS
+var packList:Array<String> = [];
+
 class FreeplaySelectState extends MusicBeatState{
 
-    // public static var freeplayCats:Array<String> = ['Dave', 'Base', 'Extra', 'Joke'];
+    // CHANGES THE INITIAL PACK LIST'S VALUES
+    var packList = JsonParser.parse(Paths.getTextFromFile("data/packlist.json"));
 
     // THIS VARIABLE FIXES THE DIFFICULTY GLITCH
     public var currentWeekDifficultiesAlt = ["Easy", "Normal", "Hard"];
@@ -59,9 +63,14 @@ class FreeplaySelectState extends MusicBeatState{
         WeekData.reloadWeekFiles();
 
         // trace(WeekData.weeksLoaded);
-        for (i in WeekData.weeksLoaded.keys()) {
-            freeplayCats.push(i);
-        }
+        // for (i in WeekData.weeksLoaded.keys()) {
+        //     freeplayCats.push(i);
+        // };
+    
+        for (packName in Reflect.fields(packList.packs)) {
+            freeplayCats.push(packName);
+        };
+
 
         BG = new FlxSprite().loadGraphic(Paths.image('morie'));
 
@@ -188,17 +197,16 @@ class FreeplaySelectState extends MusicBeatState{
         FlxG.sound.play(Paths.sound('scrollMenu'));
 
         // THIS TRACES THE CURRENTLY LOADED WEEKS
-        if (WeekData.weeksLoaded[freeplayCats[curSelected]].difficulties != null) {
-            if (WeekData.weeksLoaded[freeplayCats[curSelected]].difficulties != "") {
-                currentWeekDifficultiesAlt = WeekData.weeksLoaded[freeplayCats[curSelected]].difficulties.split(", ");
-            } else {
-                currentWeekDifficultiesAlt = ["Easy", "Normal", "Hard"];
-            };
-        } else {
-            currentWeekDifficultiesAlt = ["Easy", "Normal", "Hard"];
-        };
+        // if (WeekData.weeksLoaded[freeplayCats[curSelected]].difficulties != null) {
+        //     if (WeekData.weeksLoaded[freeplayCats[curSelected]].difficulties != "") {
+        //         currentWeekDifficultiesAlt = WeekData.weeksLoaded[freeplayCats[curSelected]].difficulties.split(", ");
+        //     } else {
+        //         currentWeekDifficultiesAlt = ["Easy", "Normal", "Hard"];
+        //     };
+        // } else {
+        //     currentWeekDifficultiesAlt = ["Easy", "Normal", "Hard"];
+        // };
         trace(currentWeekDifficultiesAlt);
-        trace(JsonParser.parse(Paths.getTextFromFile("data/packlist.json")));
     }
 
 }
